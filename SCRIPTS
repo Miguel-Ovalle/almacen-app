@@ -1,0 +1,55 @@
+
+CREATE DATABASE Almacen_Castores;
+GO
+
+USE Almacen_Castores;
+GO
+
+-- Tabla: roles
+CREATE TABLE roles (
+    idRol TINYINT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(30) NOT NULL UNIQUE
+);
+GO
+
+-- Tabla: usuarios
+CREATE TABLE usuarios (
+    idUsuario INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(100) NOT NULL,
+    correo NVARCHAR(100) NOT NULL UNIQUE,
+    contrasena NVARCHAR(255) NOT NULL,
+    idRol TINYINT NOT NULL,
+    estatus BIT NOT NULL DEFAULT(1),
+    CONSTRAINT FK_usuarios_roles FOREIGN KEY (idRol) REFERENCES roles(idRol)
+);
+GO
+
+-- Tabla: productos
+CREATE TABLE productos (
+    idProducto INT IDENTITY(1,1) PRIMARY KEY,
+    nombre NVARCHAR(60) NOT NULL UNIQUE,
+    precio DECIMAL(16,2) NOT NULL DEFAULT(0),
+    cantidad INT NOT NULL DEFAULT(0),
+    estatus BIT NOT NULL DEFAULT(1)
+);
+GO
+
+-- Tabla: movimientos
+CREATE TABLE movimientos (
+    idMovimiento BIGINT IDENTITY(1,1) PRIMARY KEY,
+    idProducto INT NOT NULL,
+    idUsuario INT NOT NULL,
+    tipo CHAR(1) NOT NULL, -- 'E' Entrada, 'S' Salida
+    cantidad INT NOT NULL,
+    fecha_hora DATETIME2 NOT NULL DEFAULT SYSUTCDATETIME(),
+    CONSTRAINT FK_movimientos_productos FOREIGN KEY (idProducto) REFERENCES productos(idProducto),
+    CONSTRAINT FK_movimientos_usuarios FOREIGN KEY (idUsuario) REFERENCES usuarios(idUsuario),
+    CONSTRAINT CK_movimientos_tipo CHECK (tipo IN ('E','S')),
+    CONSTRAINT CK_movimientos_cantidad CHECK (cantidad > 0)
+);
+GO
+
+-- Índices opcionales para mejorar consultas
+CREATE INDEX IX_movimientos_fecha ON movimientos(fecha_hora DESC);
+CREATE INDEX IX_movimientos_tipo ON movimientos(tipo);
+GO
