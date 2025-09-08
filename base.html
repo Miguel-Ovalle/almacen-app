@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Almacén{% endblock %}</title>
+</head>
+<body>
+  <nav>
+    <a href="{{ url_for('inicio') }}">Inicio</a>
+    <a href="{{ url_for('inventario_list') }}">Inventario</a>
+    <a href="{{ url_for('salida') }}">Salida</a>
+    <a href="{{ url_for('historico') }}">Histórico</a>
+  </nav>
+  <hr>
+  {% block content %}{% endblock %}
+</body>
+</html>
